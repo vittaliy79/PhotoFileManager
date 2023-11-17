@@ -81,6 +81,30 @@
         }
     </style>
     <script type="text/javascript">
+        let lastChecked = null;
+
+        function attachCheckboxListeners() {
+            const checkboxes = Array.from(document.querySelectorAll('.action-checkbox'));
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('click', (e) => {
+                    if (!lastChecked) {
+                        lastChecked = checkbox;
+                        return;
+                    }
+
+                    if (e.shiftKey) {
+                        let start = checkboxes.indexOf(lastChecked);
+                        let end = checkboxes.indexOf(checkbox);
+                        checkboxes.slice(Math.min(start, end), Math.max(start, end) + 1)
+                            .forEach(cb => cb.checked = lastChecked.checked);
+                    }
+
+                    lastChecked = checkbox;
+                    updateButtonStates();
+                });
+            });
+        }
+
         function initPage() {
             toggleCheckboxes(true);
             attachCheckboxListeners();
@@ -93,12 +117,6 @@
                 checkbox.checked = checked;
             });
             updateButtonStates();
-        }
-
-        function attachCheckboxListeners() {
-            document.querySelectorAll('.action-checkbox').forEach(checkbox => {
-                checkbox.onclick = updateButtonStates;
-            });
         }
 
         function updateButtonStates() {
@@ -215,9 +233,8 @@
     <tr th:each="result, iterStat : ${comparisonResults}" th:data-filename="${result.mainFolderFile}"
         th:data-index="${iterStat.index}">
         <td>
-            <input type="checkbox" th:class="${result.subFolderFiles.empty ? 'action-checkbox' : null}"
-                   th:value="${result.mainFolderFile}" onclick="updateButtonStates()"
-                   th:checked="${result.subFolderFiles.empty}"/>
+            <input type="checkbox" th:if="${result.subFolderFiles.empty}" th:class="action-checkbox"
+                   th:value="${result.mainFolderFile}" onclick="updateButtonStates()" checked="checked"/>
         </td>
         <td>
             <img th:id="'thumbnail' + ${iterStat.index}" class="thumbnail"/>

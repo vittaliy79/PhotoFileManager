@@ -11,19 +11,25 @@ import java.util.List;
 @Service
 public class FileManagementService {
 
-    public static int deleteSelectedFiles(String mainFolderPath, List<String> filesToDelete) {
+    public static FileOperationResponse deleteSelectedFiles(String mainFolderPath, List<String> filesToDelete) {
         int deletedCount = 0;
+        boolean success = true;
+
         for (String fileName : filesToDelete) {
             File fileToDelete = new File(mainFolderPath, fileName);
-            if (fileToDelete.exists() && fileToDelete.delete()) {
+            if (fileToDelete.exists() && !fileToDelete.delete()) {
+                success = false;
+                // Optionally, log the failure
+            } else {
                 deletedCount++;
             }
         }
-        return deletedCount;
+
+        return new FileOperationResponse(success, deletedCount);
     }
 
-    public boolean moveSelectedFiles(String mainFolderPath, List<String> filesToMove,
-                                     String destinationPath) {
+    public FileOperationResponse moveSelectedFiles(String mainFolderPath, List<String> filesToMove,
+                                                   String destinationPath) {
         try {
             for (String fileName : filesToMove) {
                 File file = new File(mainFolderPath, fileName);
@@ -33,10 +39,10 @@ public class FileManagementService {
                             StandardCopyOption.REPLACE_EXISTING);
                 }
             }
-            return true;
+            return new FileOperationResponse(true);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new FileOperationResponse(false);
         }
     }
 }
