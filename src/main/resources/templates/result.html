@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <title>File Comparison Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto; /* Centering the table */
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 5px;
+            margin: 5px 0;
+        }
+
+        .gmail-button:disabled {
+            background-color: #f1f3f4;
+            color: #c2c2c2;
+            border: 1px solid #e0e0e0;
+            cursor: not-allowed;
+        }
+
+        .gmail-button {
+            background-color: #ffffff;
+            color: #5f6368;
+            padding: 8px 16px;
+            margin: 5px 8px;
+            font-size: 14px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .gmail-button:hover {
+            box-shadow: 0 1px 3px rgba(60, 64, 67, .08), 0 1px 2px rgba(60, 64, 67, .16);
+        }
+
+        .button-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .thumbnail {
+            width: 50px; /* or any other size */
+            height: auto;
+        }
+    </style>
+    <script type="text/javascript">
+        function initPage() {
+            toggleCheckboxes(true);
+            attachCheckboxListeners();
+            updateButtonStates();
+            loadAllThumbnails();
+        }
+
+        function toggleCheckboxes(checked) {
+            document.querySelectorAll('.action-checkbox').forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+            updateButtonStates();
+        }
+
+        function attachCheckboxListeners() {
+            document.querySelectorAll('.action-checkbox').forEach(checkbox => {
+                checkbox.onclick = updateButtonStates;
+            });
+        }
+
+        function updateButtonStates() {
+            const buttons = document.querySelectorAll('.action-button');
+            const anyChecked = Array.from(document.querySelectorAll('.action-checkbox'))
+                .some(cb => cb.checked);
+            buttons.forEach(button => button.disabled = !anyChecked);
+        }
+
+        function deleteSelectedFiles() {
+            const confirmed = confirm("Are you sure you want to delete selected files?");
+            if (!confirmed) {
+                console.log('Deletion cancelled by the user.');
+                return;
+            }
+
+            const mainFolderPath = document.getElementById('mainFolderPath').value;
+            const checkboxes = document.querySelectorAll('.action-checkbox:checked');
+            const filesToDelete = Array.from(checkboxes).map(cb => cb.value);
+
+            fetch('/deleteNonMatchingFiles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({mainFolderPath, filesToDelete})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        checkboxes.forEach(cb => cb.closest('tr').remove());
+                        alert("Selected files have been successfully deleted.");
+                    } else {
+                        alert("There was an error deleting the files.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function moveSelectedFiles() {
+            const destinationPath = prompt("Enter the destination path for moving files:", "/path/to/destination");
+            if (!destinationPath) {
+                alert("Destination path not provided. Operation cancelled.");
+                return;
+            }
+            const mainFolderPath = document.getElementById('mainFolderPath').value;
+            const checkboxes = document.querySelectorAll('.action-checkbox:checked');
+            const filesToMove = Array.from(checkboxes).map(cb => cb.value);
+
+            fetch('/moveFiles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({mainFolderPath, filesToMove, destinationPath})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        checkboxes.forEach(cb => cb.closest('tr').remove());
+                        alert("Selected files have been successfully moved.");
+                    } else {
+                        alert("There was an error deleting the files.");
+                    }
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+        function fetchAndDisplayImage(mainFolderPath, filename, imageElementId) {
+            fetch('/images', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mainFolderPath, filename })
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    document.getElementById(imageElementId).src = URL.createObjectURL(blob);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function loadAllThumbnails() {
+            // Assuming each row has a data attribute with the filename
+            document.querySelectorAll('tr[data-filename]').forEach(row => {
+                const mainFolderPath = document.getElementById('mainFolderPath').value;
+                const filename = row.getAttribute('data-filename');
+                const imageId = 'thumbnail' + row.getAttribute('data-index');
+                fetchAndDisplayImage(mainFolderPath, filename, imageId);
+            });
+        }
+    </script>
+</head>
+<body onload="initPage()">
+<h1>File Comparison Results</h1>
+<!-- Duplicate buttons at the top -->
+<div class="button-container">
+    <button class="gmail-button action-button" onclick="moveSelectedFiles()" disabled>Move Selected Files</button>
+    <button class="gmail-button action-button" onclick="deleteSelectedFiles()" disabled>Delete Selected Files</button>
+</div>
+<input type="hidden" id="mainFolderPath" th:value="${mainFolderPath}"/>
+<input type="hidden" id="subFolderPath" th:value="${subFolderPath}"/>
+<table>
+    <thead>
+    <tr>
+        <th>
+            <input type="checkbox" onclick="toggleCheckboxes(this.checked)" checked/>
+            Select
+        </th>
+        <th>Main Folder Files</th>
+        <th>Subfolder Files</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="result, iterStat : ${comparisonResults}" th:data-filename="${result.mainFolderFile}" th:data-index="${iterStat.index}">
+    <td>
+            <input type="checkbox" th:class="${result.subFolderFiles.empty ? 'action-checkbox' : null}" th:value="${result.mainFolderFile}" onclick="updateButtonStates()" th:checked="${result.subFolderFiles.empty}"/>
+        </td>
+        <td>
+            <img th:id="'thumbnail' + ${iterStat.index}" class="thumbnail"/>
+            <span th:text="${result.mainFolderFile}">Main Folder File</span>
+        </td>
+        <td>
+            <ul>
+                <li th:each="subFile : ${result.subFolderFiles}" th:text="${subFile}">Subfolder File</li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Existing buttons at the bottom, now styled like Gmail -->
+<div class="button-container">
+    <button class="gmail-button action-button" onclick="moveSelectedFiles()" disabled>Move Selected Files</button>
+    <button class="gmail-button action-button" onclick="deleteSelectedFiles()" disabled>Delete Selected Files</button>
+</div>
+<a href="/">Back to Search</a>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Comparison Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function updateFolderPath() {
+            var input = document.getElementById('folderInput');
+            var output = document.getElementById('folderPath');
+            var files = input.files;
+
+            if (files.length > 0) {
+                var relativePath = files[0].webkitRelativePath;
+                var folderPath = relativePath.split("/")[0]; // Extracts the folder name
+                output.value = folderPath; // Sets the folder name in the text input
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1>Select Folder and Subfolder</h1>
+    <form action="/compare" method="get">
+        <label for="mainFolderPath">Main Folder Path:</label>
+        <input type="text" id="mainFolderPath" name="mainFolderPath" required>
+
+        <label for="subFolderName">Subfolder Path:</label>
+        <input type="text" id="subFolderName" name="subFolderName" required>
+
+        <input type="submit" value="Compare">
+    </form>
+</div>
+</body>
+</html>
