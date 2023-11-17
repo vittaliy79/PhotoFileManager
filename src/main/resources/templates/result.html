@@ -81,6 +81,13 @@
         }
     </style>
     <script type="text/javascript">
+        function initPage() {
+            toggleCheckboxes(true);
+            attachCheckboxListeners();
+            updateButtonStates();
+            populateImages(false)
+        }
+
         let lastChecked = null;
 
         function attachCheckboxListeners() {
@@ -103,13 +110,6 @@
                     updateButtonStates();
                 });
             });
-        }
-
-        function initPage() {
-            toggleCheckboxes(true);
-            attachCheckboxListeners();
-            updateButtonStates();
-            loadAllThumbnails();
         }
 
         function toggleCheckboxes(checked) {
@@ -185,17 +185,31 @@
                 .catch(error => console.error('Ошибка:', error));
         }
 
-        function fetchAndDisplayImage(mainFolderPath, filename, imageElementId) {
+        function fetchAndDisplayImage(mainFolderPath, filename, imageElementId, callWithConversion) {
+            if ((callWithConversion && !filename.toLowerCase().endsWith('.cr2')) ||
+                (!callWithConversion && !filename.toLowerCase().endsWith('.jpg'))) {
+                return;
+            }
+
             fetch('/images', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({mainFolderPath, filename})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mainFolderPath, filename, callWithConversion })
             })
                 .then(response => response.blob())
                 .then(blob => {
                     document.getElementById(imageElementId).src = URL.createObjectURL(blob);
                 })
                 .catch(error => console.error('Error:', error));
+        }
+
+        function populateImages(callWithConversion) {
+            document.querySelectorAll('tr[data-filename]').forEach(row => {
+                const mainFolderPath = document.getElementById('mainFolderPath').value;
+                const filename = row.getAttribute('data-filename');
+                const imageId = 'thumbnail' + row.getAttribute('data-index');
+                fetchAndDisplayImage(mainFolderPath, filename, imageId, callWithConversion);
+            });
         }
 
         function loadAllThumbnails() {
@@ -215,6 +229,7 @@
 <div class="button-container">
     <button class="gmail-button action-button" onclick="moveSelectedFiles()" disabled>Move Selected Files</button>
     <button class="gmail-button action-button" onclick="deleteSelectedFiles()" disabled>Delete Selected Files</button>
+    <button class="gmail-button action-button" onclick="populateImages(true)">Populate With Conversion</button>
 </div>
 <input type="hidden" id="mainFolderPath" th:value="${mainFolderPath}"/>
 <input type="hidden" id="subFolderPath" th:value="${subFolderPath}"/>
@@ -252,6 +267,7 @@
 <div class="button-container">
     <button class="gmail-button action-button" onclick="moveSelectedFiles()" disabled>Move Selected Files</button>
     <button class="gmail-button action-button" onclick="deleteSelectedFiles()" disabled>Delete Selected Files</button>
+    <button class="gmail-button action-button" onclick="populateImages(true)">Populate With Conversion</button>
 </div>
 <a href="/">Back to Search</a>
 </body>

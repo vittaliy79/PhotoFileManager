@@ -1,6 +1,6 @@
 package com.vitalmoments.controller;
 
-import org.apache.commons.io.FilenameUtils;
+import lombok.Data;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -32,7 +32,7 @@ public class ImageController {
         }
 
         try {
-            if (request.getFilename().toLowerCase().endsWith(".cr2")) {
+            if (request.isCallWithConversion() && request.getFilename().toLowerCase().endsWith(".cr2")) {
                 ProcessBuilder processBuilder = new ProcessBuilder();
                 // Get the process's environment variables as a mutable map
                 Map<String, String> environment = processBuilder.environment();
@@ -75,6 +75,7 @@ public class ImageController {
                         e.printStackTrace();
                         // Handle the exception
                     }*/
+                    System.out.println("ImageMagick processed the file: " + request.getFilename());
                     return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageResource);
                 }
             } else {
@@ -101,25 +102,9 @@ public class ImageController {
 }
 
 
+@Data
 class ImageRequest {
     private String mainFolderPath;
     private String filename;
-
-    // Getters and Setters
-
-    public String getMainFolderPath() {
-        return mainFolderPath;
-    }
-
-    public void setMainFolderPath(String mainFolderPath) {
-        this.mainFolderPath = mainFolderPath;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
+    private boolean callWithConversion;
 }

@@ -28,8 +28,8 @@ public class FileManagementService {
         return new FileOperationResponse(success, deletedCount);
     }
 
-    public FileOperationResponse moveSelectedFiles(String mainFolderPath, List<String> filesToMove,
-                                                   String destinationPath) {
+    public static FileOperationResponse moveSelectedFiles(String mainFolderPath, List<String> filesToMove,
+                                                          String destinationPath) {
         try {
             for (String fileName : filesToMove) {
                 File file = new File(mainFolderPath, fileName);

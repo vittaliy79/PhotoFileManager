@@ -1,6 +1,7 @@
 package com.vitalmoments.service;
 
 import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -8,7 +9,7 @@ import java.util.stream.Collectors;
 @Service
 public class FileComparisonService {
 
-    public List<FileComparisonResult> compareFiles(String mainFolderPath, String subFolderPath) {
+    public static List<FileComparisonResult> compareFiles(String mainFolderPath, String subFolderPath) {
         Map<String, String> mainFolderCR2Files = getFileNamesWithExtensions(mainFolderPath, ".cr2");
         Map<String, String> mainFolderJPGFiles = getFileNamesWithExtensions(mainFolderPath, ".jpg");
         List<String> subFolderFiles = getFileNames(subFolderPath);
@@ -33,7 +34,7 @@ public class FileComparisonService {
         return comparisonResults;
     }
 
-    private Map<String, String> getFileNamesWithExtensions(String folderPath, String extension) {
+    private static Map<String, String> getFileNamesWithExtensions(String folderPath, String extension) {
         Map<String, String> fileNames = new HashMap<>();
         File folder = new File(folderPath);
 
@@ -48,7 +49,7 @@ public class FileComparisonService {
         return fileNames;
     }
 
-    private List<String> getFileNames(String folderPath) {
+    private static List<String> getFileNames(String folderPath) {
         if (folderPath == null || folderPath.isEmpty()) {
             return new ArrayList<>(); // Return an empty list if the path is null or empty
         }
@@ -67,6 +68,4 @@ public class FileComparisonService {
 
         return fileNames;
     }
-
-
 }

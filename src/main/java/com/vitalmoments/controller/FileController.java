@@ -4,6 +4,7 @@ import com.vitalmoments.service.FileComparisonResult;
 import com.vitalmoments.service.FileComparisonService;
 import com.vitalmoments.service.FileManagementService;
 import com.vitalmoments.service.FileOperationResponse;
+import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,18 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@AllArgsConstructor
 public class FileController {
-
-    private final FileComparisonService fileComparisonService;
-    private final FileManagementService fileManagementService;
-
-    public FileController(final FileComparisonService fileComparisonService,
-                          final FileManagementService fileManagementService
-    ) {
-        this.fileComparisonService = fileComparisonService;
-        this.fileManagementService = fileManagementService;
-    }
-
     @GetMapping("/")
     public String index() {
         return "index";
@@ -39,7 +30,7 @@ public class FileController {
         // Assemble the full path for the subfolder using Apache Commons IO
         String subFolderPath = FilenameUtils.concat(mainFolderPath, subFolderName);
 
-        List<FileComparisonResult> comparisonResults = fileComparisonService.compareFiles(mainFolderPath, subFolderPath);
+        List<FileComparisonResult> comparisonResults = FileComparisonService.compareFiles(mainFolderPath, subFolderPath);
         model.addAttribute("comparisonResults", comparisonResults);
         model.addAttribute("mainFolderPath", mainFolderPath);
         model.addAttribute("subFolderPath", subFolderPath);
@@ -66,7 +57,7 @@ public class FileController {
         List<String> filesToMove = (List<String>) payload.get("filesToMove");
 
         FileOperationResponse response =
-                fileManagementService.moveSelectedFiles(mainFolderPath, filesToMove, destinationPath);
+                FileManagementService.moveSelectedFiles(mainFolderPath, filesToMove, destinationPath);
         return ResponseEntity.ok(response);
     }
 }
