@@ -8,4 +8,8 @@ import lombok.Data;
 public class FileOperationResponse {
     private boolean success;
     private int deletedCount;
+
+    public FileOperationResponse(boolean success) {
+        this.success = success;
+    }
 }
