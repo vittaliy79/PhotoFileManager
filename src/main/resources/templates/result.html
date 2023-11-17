@@ -166,11 +166,12 @@
                 })
                 .catch(error => console.error('Ошибка:', error));
         }
+
         function fetchAndDisplayImage(mainFolderPath, filename, imageElementId) {
             fetch('/images', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mainFolderPath, filename })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({mainFolderPath, filename})
             })
                 .then(response => response.blob())
                 .then(blob => {
@@ -211,9 +212,12 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="result, iterStat : ${comparisonResults}" th:data-filename="${result.mainFolderFile}" th:data-index="${iterStat.index}">
-    <td>
-            <input type="checkbox" th:class="${result.subFolderFiles.empty ? 'action-checkbox' : null}" th:value="${result.mainFolderFile}" onclick="updateButtonStates()" th:checked="${result.subFolderFiles.empty}"/>
+    <tr th:each="result, iterStat : ${comparisonResults}" th:data-filename="${result.mainFolderFile}"
+        th:data-index="${iterStat.index}">
+        <td>
+            <input type="checkbox" th:class="${result.subFolderFiles.empty ? 'action-checkbox' : null}"
+                   th:value="${result.mainFolderFile}" onclick="updateButtonStates()"
+                   th:checked="${result.subFolderFiles.empty}"/>
         </td>
         <td>
             <img th:id="'thumbnail' + ${iterStat.index}" class="thumbnail"/>
