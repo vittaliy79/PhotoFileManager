@@ -34,7 +34,7 @@ function attachListeners() {
         }
     });
 
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         if (document.getElementById('imageModal').style.display === 'block') {
             adjustModalHeight();
         }
@@ -77,9 +77,9 @@ function deleteSelectedFiles() {
         .then(data => {
             if (data.success) {
                 checkboxes.forEach(cb => cb.closest('tr').remove());
-                alert("Selected files have been successfully deleted.");
+                showInfoMessage("Selected files have been successfully deleted.");
             } else {
-                alert("There was an error deleting the files.");
+                showInfoMessage("There was an error deleting the files.");
             }
         })
         .catch(error => console.error('Error:', error));
@@ -106,9 +106,9 @@ function moveSelectedFiles() {
         .then(data => {
             if (data.success) {
                 checkboxes.forEach(cb => cb.closest('tr').remove());
-                alert("Selected files have been successfully moved.");
+                showInfoMessage("Selected files have been successfully moved.");
             } else {
-                alert("There was an error deleting the files.");
+                showInfoMessage("There was an error moving the files.");
             }
         })
         .catch(error => console.error('Ошибка:', error));
@@ -146,6 +146,8 @@ function populateImages(callWithConversion) {
         if ((isJpg && !callWithConversion) || (!isJpg && callWithConversion)) {
             fetchAndDisplayImage(mainFolderPath, filename, imageId, callWithConversion);
         }
+        const imageElement = document.getElementById(imageId);
+        imageElement.setAttribute('data-filename', filename);
     });
 }
 
@@ -168,13 +170,64 @@ function loadSpecificThumbnail(element) {
     fetchAndDisplayImage(mainFolderPath, filename, imageId, true);
 }
 
-function openModalWithImage(imageElement) {
-    const modalImage = document.getElementById('modalImage');
-    const imageModal = document.getElementById('imageModal');
+let currentImageIndex = -1;
+let totalImages = 0;
 
-    modalImage.src = imageElement.src;
-    imageModal.style.display = 'block';
-    adjustModalHeight(); // Adjust modal and image size
+// Call this function when a thumbnail is clicked to open the modal
+function openModalWithImage(imgElement) {
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    modal.style.display = 'block';
+    modalImage.src = imgElement.src;
+
+    currentImageIndex = parseInt(imgElement.id.replace('thumbnail', ''), 10);
+    totalImages = document.querySelectorAll('.thumbnail').length;
+    const fileName = imgElement.getAttribute('data-filename');
+    document.getElementById('modalTitle').textContent = fileName;
+
+    document.addEventListener('keydown', handleArrowKeyPress);
+}
+
+function closeModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.removeEventListener('keydown', handleArrowKeyPress);
+}
+
+function handleArrowKeyPress(event) {
+    if (event.key === 'ArrowLeft') {
+        showPreviousImage();
+    } else if (event.key === 'ArrowRight') {
+        showNextImage();
+    }
+}
+
+function showPreviousImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+        updateModalImage();
+        updateModalTitle();
+    }
+}
+
+function showNextImage() {
+    if (currentImageIndex < totalImages - 1) {
+        currentImageIndex++;
+        updateModalImage();
+        updateModalTitle();
+    }
+}
+
+function updateModalTitle() {
+    const newImageTitle = document.getElementById('thumbnail' + currentImageIndex).getAttribute('data-filename');
+    document.getElementById('modalTitle').textContent = newImageTitle;
+}
+
+function updateModalImage() {
+    const newImageSrc = document.getElementById('thumbnail' + currentImageIndex).src;
+    const modalImage = document.getElementById('modalImage');
+    modalImage.src = newImageSrc;
+
+    adjustModalHeight(); // Adjust the modal height after changing the image
 }
 
 function adjustModalHeight() {
@@ -183,7 +236,20 @@ function adjustModalHeight() {
     imageModal.style.maxHeight = `${viewportHeight * 0.9}px`;
 }
 
+function showInfoMessage(message) {
+    const infoMessageDiv = document.getElementById('infoText');
+    infoMessageDiv.textContent = message;
 
-function closeModal() {
-    document.getElementById('imageModal').style.display = 'none';
+    // Display the message
+    document.getElementById('infoMessage').style.display = 'block';
+
+    // Set a timeout to hide the message after 10 seconds (10000 milliseconds)
+    setTimeout(function () {
+        document.getElementById('infoMessage').style.display = 'none';
+    }, 10000);
+}
+
+
+function closeInfoMessage() {
+    document.getElementById('infoMessage').style.display = 'none';
 }

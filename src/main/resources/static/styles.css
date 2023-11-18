@@ -91,7 +91,8 @@ li {
 #imageModal {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
     position: fixed; /* Stay in place */
     z-index: 100; /* Sit on top */
     left: 50%;
@@ -113,15 +114,6 @@ li {
     margin-top: 20px; /* Space between the image and the button */
 }
 
-#modalImage {
-    max-width: 100%; /* Limit width to the modal's width */
-    max-height: 80vh; /* Adjust this value as needed */
-    height: auto; /* Maintain aspect ratio */
-    width: auto; /* Maintain aspect ratio */
-    /* Ensure the image doesn't push the footer down */
-    margin: 0 auto auto;
-
-}
 
 /* Close button styling */
 #imageModal button {
@@ -136,4 +128,56 @@ li {
 
 #imageModal button:hover {
     background-color: #45a049; /* Darker shade on hover */
+}
+
+.modal-title {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.2rem; /* Adjust font size as needed */
+    font-weight: bold; /* Optional: if you want the title to be bold */
+    display: block; /* Ensures the title takes up the full width */
+}
+
+
+#modalImage {
+    max-width: 100%; /* Limit width to the modal's width */
+    max-height: 80vh; /* Adjust this value as needed */
+    height: auto; /* Maintain aspect ratio */
+    width: auto; /* Maintain aspect ratio */
+    /* Ensure the image doesn't push the footer down */
+    margin: 0 auto auto;
+}
+
+.info-message {
+    background: #eaf3e6; /* Light green background */
+    border-color: #95c381 #95c381 #95c381 #2a8703; /* Green borders with darker left border */
+    color: #1d5f02; /* Dark green text color */
+    border-radius: 0.25rem; /* Rounded corners */
+    border-style: solid;
+    border-width: 0.0625rem 0.0625rem 0.0625rem 0.25rem; /* Specific border widths */
+    box-sizing: border-box;
+    display: flex;
+    font-family: Bogle, Helvetica Neue, Helvetica, Arial, sans-serif; /* Modern font stack */
+    font-size: .875rem; /* Font size */
+    line-height: 1.25rem; /* Line height for better readability */
+    padding: 0.4375rem 1rem 0.4375rem 0.75rem; /* Padding inside the box */
+    width: 100%; /* Full width of the container */
+    align-items: center; /* Align items vertically centered */
+    position: relative; /* For absolute positioning of the close button */
+}
+
+.info-message .close-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    color: #1d5f02; /* Matching text color */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.info-message .close-btn:hover {
+    color: #95c381; /* Lighter green on hover */
 }

@@ -12,6 +12,10 @@
     <button class="gmail-button action-button" onclick="deleteSelectedFiles()" disabled>Delete Selected Files</button>
     <button class="gmail-button" onclick="populateImages(true)">Populate With Conversion</button>
 </div>
+<!-- Place this div before your table or the top buttons -->
+<div id="infoMessage" class="info-message" style="display: none;">
+    <span id="infoText"></span>
+</div>
 <input type="hidden" id="mainFolderPath" th:value="${mainFolderPath}"/>
 <input type="hidden" id="subFolderPath" th:value="${subFolderPath}"/>
 <table>
@@ -35,7 +39,7 @@
         <td>
             <img th:id="'thumbnail' + ${iterStat.index}" class="thumbnail" onclick="openModalWithImage(this)"/>
             <span th:text="${result.mainFolderFile}">Main Folder File</span>
-            <img src="load-icon-png-7959.png"
+            <img src="load-icon.png"
                  th:attr="data-filename=${result.mainFolderFile}, data-index=${iterStat.index}"
                  onclick="loadSpecificThumbnail(this)"
                  class="loading-icon"/>
@@ -59,6 +63,7 @@
 <!-- Modal Structure -->
 <div id="imageModal"
      style="display:none; position:fixed; z-index:100; left:50%; top:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:10px;">
+    <span id="modalTitle" class="modal-title"></span>
     <img id="modalImage" src="">
     <div style="text-align: center; margin-top: 20px;">
         <button onclick="closeModal()">Close</button>
