@@ -10,7 +10,7 @@
 <div class="button-container">
     <button class="gmail-button action-button" onclick="moveSelectedFiles()" disabled>Move Selected Files</button>
     <button class="gmail-button action-button" onclick="deleteSelectedFiles()" disabled>Delete Selected Files</button>
-    <button class="gmail-button action-button" onclick="populateImages(true)">Populate With Conversion</button>
+    <button class="gmail-button" onclick="populateImages(true)">Populate With Conversion</button>
 </div>
 <input type="hidden" id="mainFolderPath" th:value="${mainFolderPath}"/>
 <input type="hidden" id="subFolderPath" th:value="${subFolderPath}"/>
@@ -52,14 +52,19 @@
 <div class="button-container">
     <button class="gmail-button action-button" onclick="moveSelectedFiles()" disabled>Move Selected Files</button>
     <button class="gmail-button action-button" onclick="deleteSelectedFiles()" disabled>Delete Selected Files</button>
-    <button class="gmail-button action-button" onclick="populateImages(true)">Populate With Conversion</button>
+    <button class="gmail-button" onclick="populateImages(true)">Populate With Conversion</button>
 </div>
 <a href="/">Back to Search</a>
+
 <!-- Modal Structure -->
-<div id="imageModal" style="display:none; position:fixed; z-index:100; left:50%; top:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:10px;">
-    <img id="modalImage" src="" style="width:800px;">
-    <button onclick="closeModal()" style="margin-top:10px;">Close</button>
+<div id="imageModal"
+     style="display:none; position:fixed; z-index:100; left:50%; top:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:10px;">
+    <img id="modalImage" src="">
+    <div style="text-align: center; margin-top: 20px;">
+        <button onclick="closeModal()">Close</button>
+    </div>
 </div>
+
 <script src="scripts.js"></script>
 </body>
 </html>

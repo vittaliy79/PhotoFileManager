@@ -1,4 +1,4 @@
-package com.vitalmoments.service;
+package com.vitalmoments.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

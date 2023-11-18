@@ -1,5 +1,6 @@
 package com.vitalmoments.service;
 
+import com.vitalmoments.model.FileComparisonResult;
 import org.springframework.stereotype.Service;
 
 import java.io.File;

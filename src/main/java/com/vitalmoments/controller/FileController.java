@@ -1,9 +1,9 @@
 package com.vitalmoments.controller;
 
-import com.vitalmoments.service.FileComparisonResult;
+import com.vitalmoments.model.FileComparisonResult;
 import com.vitalmoments.service.FileComparisonService;
 import com.vitalmoments.service.FileManagementService;
-import com.vitalmoments.service.FileOperationResponse;
+import com.vitalmoments.model.FileOperationResponse;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.ResponseEntity;

@@ -89,7 +89,9 @@ li {
 }
 
 #imageModal {
-    display: none; /* Hidden by default */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     position: fixed; /* Stay in place */
     z-index: 100; /* Sit on top */
     left: 50%;
@@ -98,18 +100,27 @@ li {
     background-color: white; /* Modal background */
     padding: 20px;
     border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); /* Shadow effect */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Shadow effect */
     width: auto; /* Auto width based on the content */
     max-width: 90vw; /* Maximum width */
     max-height: 90vh; /* Maximum height */
     overflow: auto;
 }
 
+#imageModal div {
+    /* Styles for the footer */
+    text-align: center;
+    margin-top: 20px; /* Space between the image and the button */
+}
+
 #modalImage {
-    max-width: 100%; /* Maximum width relative to the modal */
-    max-height: 80vh; /* Maximum height relative to the viewport */
+    max-width: 100%; /* Limit width to the modal's width */
+    max-height: 80vh; /* Adjust this value as needed */
     height: auto; /* Maintain aspect ratio */
     width: auto; /* Maintain aspect ratio */
+    /* Ensure the image doesn't push the footer down */
+    margin: 0 auto auto;
+
 }
 
 /* Close button styling */

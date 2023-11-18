@@ -17,6 +17,7 @@ dependencies {
     implementation("commons-io:commons-io:2.15.0")
     implementation("org.apache.commons:commons-imaging:1.0-alpha3")
     implementation("org.projectlombok:lombok:1.18.28")
+    implementation("org.springframework.boot:spring-boot-starter-logging")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     testImplementation("org.projectlombok:lombok:1.18.28")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
