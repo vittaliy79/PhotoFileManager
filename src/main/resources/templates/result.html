@@ -2,226 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <title>File Comparison Results</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto; /* Centering the table */
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #ddd;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        li {
-            padding: 5px;
-            margin: 5px 0;
-        }
-
-        .gmail-button:disabled {
-            background-color: #f1f3f4;
-            color: #c2c2c2;
-            border: 1px solid #e0e0e0;
-            cursor: not-allowed;
-        }
-
-        .gmail-button {
-            background-color: #ffffff;
-            color: #5f6368;
-            padding: 8px 16px;
-            margin: 5px 8px;
-            font-size: 14px;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: left;
-        }
-
-        .gmail-button:hover {
-            box-shadow: 0 1px 3px rgba(60, 64, 67, .08), 0 1px 2px rgba(60, 64, 67, .16);
-        }
-
-        .button-container {
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-        .thumbnail {
-            width: 50px; /* or any other size */
-            height: auto;
-        }
-    </style>
-    <script type="text/javascript">
-        function initPage() {
-            toggleCheckboxes(true);
-            attachCheckboxListeners();
-            updateButtonStates();
-            populateImages(false)
-        }
-
-        let lastChecked = null;
-
-        function attachCheckboxListeners() {
-            const checkboxes = Array.from(document.querySelectorAll('.action-checkbox'));
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('click', (e) => {
-                    if (!lastChecked) {
-                        lastChecked = checkbox;
-                        return;
-                    }
-
-                    if (e.shiftKey) {
-                        let start = checkboxes.indexOf(lastChecked);
-                        let end = checkboxes.indexOf(checkbox);
-                        checkboxes.slice(Math.min(start, end), Math.max(start, end) + 1)
-                            .forEach(cb => cb.checked = lastChecked.checked);
-                    }
-
-                    lastChecked = checkbox;
-                    updateButtonStates();
-                });
-            });
-        }
-
-        function toggleCheckboxes(checked) {
-            document.querySelectorAll('.action-checkbox').forEach(checkbox => {
-                checkbox.checked = checked;
-            });
-            updateButtonStates();
-        }
-
-        function updateButtonStates() {
-            const buttons = document.querySelectorAll('.action-button');
-            const anyChecked = Array.from(document.querySelectorAll('.action-checkbox'))
-                .some(cb => cb.checked);
-            buttons.forEach(button => button.disabled = !anyChecked);
-        }
-
-        function deleteSelectedFiles() {
-            const confirmed = confirm("Are you sure you want to delete selected files?");
-            if (!confirmed) {
-                console.log('Deletion cancelled by the user.');
-                return;
-            }
-
-            const mainFolderPath = document.getElementById('mainFolderPath').value;
-            const checkboxes = document.querySelectorAll('.action-checkbox:checked');
-            const filesToDelete = Array.from(checkboxes).map(cb => cb.value);
-
-            fetch('/deleteNonMatchingFiles', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({mainFolderPath, filesToDelete})
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        checkboxes.forEach(cb => cb.closest('tr').remove());
-                        alert("Selected files have been successfully deleted.");
-                    } else {
-                        alert("There was an error deleting the files.");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function moveSelectedFiles() {
-            const destinationPath = prompt("Enter the destination path for moving files:", "/path/to/destination");
-            if (!destinationPath) {
-                alert("Destination path not provided. Operation cancelled.");
-                return;
-            }
-            const mainFolderPath = document.getElementById('mainFolderPath').value;
-            const checkboxes = document.querySelectorAll('.action-checkbox:checked');
-            const filesToMove = Array.from(checkboxes).map(cb => cb.value);
-
-            fetch('/moveFiles', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({mainFolderPath, filesToMove, destinationPath})
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        checkboxes.forEach(cb => cb.closest('tr').remove());
-                        alert("Selected files have been successfully moved.");
-                    } else {
-                        alert("There was an error deleting the files.");
-                    }
-                })
-                .catch(error => console.error('Ошибка:', error));
-        }
-
-        function fetchAndDisplayImage(mainFolderPath, filename, imageElementId, callWithConversion) {
-            if ((callWithConversion && !filename.toLowerCase().endsWith('.cr2')) ||
-                (!callWithConversion && !filename.toLowerCase().endsWith('.jpg'))) {
-                return;
-            }
-
-            fetch('/images', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mainFolderPath, filename, callWithConversion })
-            })
-                .then(response => response.blob())
-                .then(blob => {
-                    document.getElementById(imageElementId).src = URL.createObjectURL(blob);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function populateImages(callWithConversion) {
-            document.querySelectorAll('tr[data-filename]').forEach(row => {
-                const mainFolderPath = document.getElementById('mainFolderPath').value;
-                const filename = row.getAttribute('data-filename');
-                const imageId = 'thumbnail' + row.getAttribute('data-index');
-                fetchAndDisplayImage(mainFolderPath, filename, imageId, callWithConversion);
-            });
-        }
-
-        function loadAllThumbnails() {
-            // Assuming each row has a data attribute with the filename
-            document.querySelectorAll('tr[data-filename]').forEach(row => {
-                const mainFolderPath = document.getElementById('mainFolderPath').value;
-                const filename = row.getAttribute('data-filename');
-                const imageId = 'thumbnail' + row.getAttribute('data-index');
-                fetchAndDisplayImage(mainFolderPath, filename, imageId);
-            });
-        }
-    </script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body onload="initPage()">
 <h1>File Comparison Results</h1>
@@ -252,8 +33,12 @@
                    th:value="${result.mainFolderFile}" onclick="updateButtonStates()" checked="checked"/>
         </td>
         <td>
-            <img th:id="'thumbnail' + ${iterStat.index}" class="thumbnail"/>
+            <img th:id="'thumbnail' + ${iterStat.index}" class="thumbnail" onclick="openModalWithImage(this)"/>
             <span th:text="${result.mainFolderFile}">Main Folder File</span>
+            <img src="load-icon-png-7959.png"
+                 th:attr="data-filename=${result.mainFolderFile}, data-index=${iterStat.index}"
+                 onclick="loadSpecificThumbnail(this)"
+                 class="loading-icon"/>
         </td>
         <td>
             <ul>
@@ -270,5 +55,11 @@
     <button class="gmail-button action-button" onclick="populateImages(true)">Populate With Conversion</button>
 </div>
 <a href="/">Back to Search</a>
+<!-- Modal Structure -->
+<div id="imageModal" style="display:none; position:fixed; z-index:100; left:50%; top:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:10px;">
+    <img id="modalImage" src="" style="width:800px;">
+    <button onclick="closeModal()" style="margin-top:10px;">Close</button>
+</div>
+<script src="scripts.js"></script>
 </body>
 </html>

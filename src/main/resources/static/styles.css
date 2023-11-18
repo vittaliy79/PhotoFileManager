@@ -1,0 +1,128 @@
+.loading-icon {
+    width: 15px;
+    height: auto;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.loading-icon:hover {
+    width: 15px;
+    height: auto;
+    opacity: 0.7;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    width: 80%;
+    margin: 20px auto; /* Centering the table */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    padding: 5px;
+    margin: 5px 0;
+}
+
+.gmail-button:disabled {
+    background-color: #f1f3f4;
+    color: #c2c2c2;
+    border: 1px solid #e0e0e0;
+    cursor: not-allowed;
+}
+
+.gmail-button {
+    background-color: #ffffff;
+    color: #5f6368;
+    padding: 8px 16px;
+    margin: 5px 8px;
+    font-size: 14px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.gmail-button:hover {
+    box-shadow: 0 1px 3px rgba(60, 64, 67, .08), 0 1px 2px rgba(60, 64, 67, .16);
+}
+
+.button-container {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.thumbnail {
+    width: 50px; /* or any other size */
+    height: auto;
+}
+
+#imageModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 100; /* Sit on top */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Center the modal on the page */
+    background-color: white; /* Modal background */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); /* Shadow effect */
+    width: auto; /* Auto width based on the content */
+    max-width: 90vw; /* Maximum width */
+    max-height: 90vh; /* Maximum height */
+    overflow: auto;
+}
+
+#modalImage {
+    max-width: 100%; /* Maximum width relative to the modal */
+    max-height: 80vh; /* Maximum height relative to the viewport */
+    height: auto; /* Maintain aspect ratio */
+    width: auto; /* Maintain aspect ratio */
+}
+
+/* Close button styling */
+#imageModal button {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    margin-top: 10px; /* Margin from the image */
+}
+
+#imageModal button:hover {
+    background-color: #45a049; /* Darker shade on hover */
+}
