@@ -1,6 +1,8 @@
 
 # PhotoFileManager
 
+This project was created with 80% help of the ChatGPT.
+
 Photo File Manager helps to remove unselected photos after retouching. Just specify the path of your raw photos and the subfolder in that folder where you have results after retouching. 
 
 The app will compare two folders and show all files grouped by the subfolder files that have been retouched. You can then move or remove files that were not selected to be retouched.
