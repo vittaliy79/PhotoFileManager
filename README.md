@@ -7,6 +7,13 @@ Photo File Manager helps to remove unselected photos after retouching. Just spec
 
 The app will compare two folders and show all files grouped by the subfolder files that have been retouched. You can then move or remove files that were not selected to be retouched.
 
+App features:
+- supports preview of images when clicking on them
+- raw files require conversion and can be loaded separately
+- support arrow keys to navigate between images in the preview
+- supports ESC to close the preview
+
+
 The project is using the ImageMagick as the CR2 conversion tool. 
 
 ### Install ImageMagick
