@@ -1,8 +1,10 @@
 package com.vitalmoments.service;
 
+import com.vitalmoments.config.Constants;
+import com.vitalmoments.config.PhotoFileManagerConfig;
 import com.vitalmoments.model.ImageRequest;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -19,14 +21,9 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class ImageService {
-    public static final String IMAGE_MAGICK_JPG_OUTPUT_STREAM = "jpg:-";
-    public static final String IMAGE_MAGICK_CONVERT_PATH = "/bin/convert";
-    public static final String IMAGE_MAGICK_LIB_PATH = "/lib";
-    public static final String CR2_RAW_EXTENSION = ".cr2";
-
-    @Value("${image.magick.home}")
-    private String magickHome;
+    private PhotoFileManagerConfig config;
 
     public ResponseEntity<Resource> getImage(ImageRequest request) {
         Path imagePath = Paths.get(request.getMainFolderPath()).resolve(request.getFilename()).normalize();
@@ -37,7 +34,7 @@ public class ImageService {
         }
 
         try {
-            if (request.isCallWithConversion() && request.getFilename().toLowerCase().endsWith(CR2_RAW_EXTENSION)) {
+            if (request.isCallWithConversion() && isRawExtension(request.getFilename())) {
                 Process process = getImageMagickProcess(imagePath);
 
                 try (InputStream is = process.getInputStream();
@@ -72,9 +69,10 @@ public class ImageService {
         Map<String, String> environment = processBuilder.environment();
 
         // Set or modify environment variables
+        String magickHome = config.getMagickHome();
         environment.put("MAGICK_HOME", magickHome);
-        environment.put("DYLD_LIBRARY_PATH", magickHome + IMAGE_MAGICK_LIB_PATH);
-        processBuilder.command(magickHome + IMAGE_MAGICK_CONVERT_PATH, imagePath.toString(), IMAGE_MAGICK_JPG_OUTPUT_STREAM);
+        environment.put("DYLD_LIBRARY_PATH", magickHome + Constants.IMAGE_MAGICK_LIB_PATH);
+        processBuilder.command(magickHome + Constants.IMAGE_MAGICK_CONVERT_PATH, imagePath.toString(), Constants.IMAGE_MAGICK_JPG_OUTPUT_STREAM);
 
         return processBuilder.start();
     }
@@ -82,5 +80,10 @@ public class ImageService {
     private static boolean isPathSecure(Path imagePath, String mainFolderPath) {
         Path mainFolder = Paths.get(mainFolderPath).normalize();
         return imagePath.startsWith(mainFolder);
+    }
+
+    private boolean isRawExtension(String filename) {
+        String fileExtension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+        return config.getRawExtensions().contains(fileExtension);
     }
 }

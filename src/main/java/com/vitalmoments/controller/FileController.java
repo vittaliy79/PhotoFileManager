@@ -1,9 +1,9 @@
 package com.vitalmoments.controller;
 
 import com.vitalmoments.model.FileComparisonResult;
+import com.vitalmoments.model.FileOperationResponse;
 import com.vitalmoments.service.FileComparisonService;
 import com.vitalmoments.service.FileManagementService;
-import com.vitalmoments.model.FileOperationResponse;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +20,8 @@ import java.util.Map;
 @Controller
 @AllArgsConstructor
 public class FileController {
+    private FileComparisonService fileComparisonService;
+
     @GetMapping("/")
     public String index() {
         return "index";
@@ -30,7 +32,7 @@ public class FileController {
         // Assemble the full path for the subfolder using Apache Commons IO
         String subFolderPath = FilenameUtils.concat(mainFolderPath, subFolderName);
 
-        List<FileComparisonResult> comparisonResults = FileComparisonService.compareFiles(mainFolderPath, subFolderPath);
+        List<FileComparisonResult> comparisonResults = fileComparisonService.compareFiles(mainFolderPath, subFolderPath);
         model.addAttribute("comparisonResults", comparisonResults);
         model.addAttribute("mainFolderPath", mainFolderPath);
         model.addAttribute("subFolderPath", subFolderPath);

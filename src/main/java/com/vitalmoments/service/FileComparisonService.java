@@ -1,6 +1,8 @@
 package com.vitalmoments.service;
 
+import com.vitalmoments.config.PhotoFileManagerConfig;
 import com.vitalmoments.model.FileComparisonResult;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -8,16 +10,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class FileComparisonService {
+    private PhotoFileManagerConfig config;
 
-    public static List<FileComparisonResult> compareFiles(String mainFolderPath, String subFolderPath) {
-        Map<String, String> mainFolderCR2Files = getFileNamesWithExtensions(mainFolderPath, ".cr2");
+    public List<FileComparisonResult> compareFiles(String mainFolderPath, String subFolderPath) {
+        Map<String, String> mainFolderRawFiles = new HashMap<>();
+
+        for (String extension : config.getRawExtensions()) {
+            mainFolderRawFiles.putAll(getFileNamesWithExtensions(mainFolderPath, "." + extension));
+        }
+
         Map<String, String> mainFolderJPGFiles = getFileNamesWithExtensions(mainFolderPath, ".jpg");
-        List<String> subFolderFiles = getFileNames(subFolderPath);
 
-        // Merge CR2 and JPG files from the main folder
-        Map<String, String> mainFolderFiles = new HashMap<>(mainFolderCR2Files);
+        // Merge RAW and JPG files from the main folder
+        Map<String, String> mainFolderFiles = new HashMap<>(mainFolderRawFiles);
         mainFolderJPGFiles.forEach(mainFolderFiles::putIfAbsent);
+
+        List<String> subFolderFiles = getFileNames(subFolderPath);
 
         List<FileComparisonResult> comparisonResults = new ArrayList<>();
 
