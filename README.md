@@ -28,3 +28,5 @@ First, you need to install ImageMagick on the server where your application will
 Then configure the path to the ImageMagick in the application.properties file like `image.magick.home=PATH_TO_IMAGE_MAGICK_FOLDER`
 
 Run the app using the `./start-app.sh` - for the first time, the app will ask for the path to the ImageMagick app if not specified earlier.
+
+When the app starts, then open browser with URL: http://localhost:8080/
